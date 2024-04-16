@@ -1,8 +1,9 @@
 const mqtt = require("mqtt");
 const io = require("socket.io-client");
-
-const brokerAddress = "mqtt://3.94.0.20:1883";
-const topicData = "esp32.mqtt";
+const dote = require("dotenv");
+dote.config();
+const brokerAddress = process.env.MQTT_BROKER_URL || "mqtt://localhost:1883";
+const topicData = process.env.TOPIC_DATA || "data";
 const socket = io(process.env.SOCKET_SERVER_URL, { transports: ["websocket"] });
 
 const sendIncomingData = (data) => {
