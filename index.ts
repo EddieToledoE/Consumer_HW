@@ -1,24 +1,28 @@
-const mqtt = require("mqtt");
-const io = require("socket.io-client");
-const dote = require("dotenv");
-dote.config();
+import mqtt from "mqtt";
+import io from "socket.io-client";
+import dotenv from "dotenv";
 
-const brokerAddress = process.env.MQTT_BROKER_URL || "mqtt://localhost:1883";
-const topicData = process.env.TOPIC_DATA || "data";
-const socket = io(process.env.SOCKET_SERVER_URL, { transports: ["websocket"] });
+dotenv.config();
 
-const sendIncomingData = (data) => {
+const brokerAddress: string =
+  process.env.MQTT_BROKER_URL || "mqtt://localhost:1883";
+const topicData: string = process.env.TOPIC_DATA || "data";
+const socket = io(process.env.SOCKET_SERVER_URL ?? "", {
+  transports: ["websocket"],
+});
+
+const sendIncomingData = (data: { topic: string; message: string }) => {
   socket.emit("IncomingData", data);
 };
 
-let client;
+let client: mqtt.MqttClient;
 
 try {
   client = mqtt.connect(brokerAddress);
-} catch (error) {
+} catch (error: any) {
   console.error("Error connecting to MQTT broker:", error.message);
 }
-
+client = mqtt.connect(brokerAddress);
 if (client) {
   client.on("error", (err) => {
     console.error("Connection error:", err);
